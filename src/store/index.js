@@ -1,15 +1,25 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export default new Vuex.Store({
-  state: {
-  },
-  mutations: {
-  },
-  actions: {
-  },
-  modules: {
-  }
+    state: {
+        funds: 10000,
+        stockStorage: {
+            rubles: {
+                name: 'Мини-деньги',
+                ownedQuantity: 100,
+                price: 10,
+            },
+            brent: {
+                name: 'BRENT',
+                ownedQuantity: 0,
+                price: 10,
+            },
+        }
+    },
+    mutations: {},
+    actions: {},
+    modules: {}
 })

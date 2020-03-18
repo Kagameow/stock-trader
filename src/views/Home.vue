@@ -1,11 +1,11 @@
 <template>
-    <v-container class="col-xs-12 col-md-8 col-lg-6 align-center justify-center">
+    <v-container class="col-xs-12 col-md-8 col-lg-6 align-center justify-center pa-6">
         <v-card>
-          <v-img  src="../assets/stonks.jpg"/>
-          <v-card-title>Trade or View your Portfolio</v-card-title>
+            <v-img src="../assets/stonks.jpg"/>
+            <v-card-title>Trade or View your Portfolio</v-card-title>
             <v-card-text>You may Save & Load your Data<br>Click on "End Day" to begin a new Day!</v-card-text>
             <v-divider class="mx-4"></v-divider>
-            <v-card-title>Your Funds: 10000$</v-card-title>
+            <v-card-title>Your Funds: {{funds}}$</v-card-title>
         </v-card>
     </v-container>
 </template>
@@ -14,6 +14,11 @@
 
     export default {
         name: 'Home',
-        components: {}
+        components: {},
+        computed: {
+            funds() {
+                return this.$store.state.funds;
+            }
+        }
     }
 </script>
