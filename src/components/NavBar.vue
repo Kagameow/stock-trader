@@ -32,12 +32,18 @@
                 End Day
             </v-btn>
             <span class="font-weight-black">
-                Funds: 10000$
+                Funds: {{funds}}$
             </span>
     </v-app-bar>
 </template>
+
 <script>
     export default {
-        name: 'NavBar'
+        name: 'NavBar',
+        computed: {
+            funds() {
+                return this.$store.state.funds;
+            }
+        }
     }
 </script>

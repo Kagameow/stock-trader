@@ -14,6 +14,11 @@ export default new Vuex.Store({
             },
             brent: {
                 name: 'BRENT',
+                ownedQuantity: 2,
+                price: 10,
+            },
+            cocks: {
+                name: 'Cocks',
                 ownedQuantity: 0,
                 price: 10,
             },
