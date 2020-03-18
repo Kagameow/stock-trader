@@ -17,7 +17,8 @@
         computed: {
             funds() {
                 return this.$store.state.funds;
-            }
+            },
+
         }
     }
 </script>

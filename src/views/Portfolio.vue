@@ -1,7 +1,7 @@
 <template>
     <v-container class="col-xs-12 col-lg-8 align-center justify-center">
         <v-row>
-            <v-col v-for="stock in stocks" :key="stock" cols="12" md="6">
+            <v-col v-for="stock in stocks" :key="stock.name" cols="12" md="6">
                 <v-card v-if="stock.ownedQuantity" color="light-blue darken-4" dark>
                     <v-row>
                         <v-col cols="5">
@@ -31,7 +31,10 @@
         name: "Portfolio",
         computed: {
             stocks() {
-                return this.$store.state.stockStorage
+                return this.$store.state.stockStorage;
+            },
+            funds() {
+                return this.$store.state.funds;
             }
         }
     }

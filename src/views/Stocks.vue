@@ -1,39 +1,33 @@
 <template>
     <v-container class="col-xs-12 col-lg-8 align-center justify-center">
         <v-row>
-            <v-col v-for="stock in stocks" :key="stock" cols="12" md="6">
-                <v-card color="teal darken-3" dark>
-                    <v-row>
-                        <v-col cols="5">
-                            <v-card-title>{{stock.name}}</v-card-title>
-                            <v-card-text>Price: {{stock.price}}</v-card-text>
-                        </v-col>
-                        <v-col cols="7">
-                            <div>
-                                <v-card-actions style="margin-top: 15px">
-                                    <v-text-field label="Quantity" outlined
-                                                  style="margin-block-end: -31px">
-
-                                    </v-text-field>
-                                    <v-btn large height="55px">Buy!</v-btn>
-                                </v-card-actions>
-                            </div>
-                        </v-col>
-                    </v-row>
-                </v-card>
-            </v-col>
+            <market-stock-card v-for="stock in stocks" :stock="stock" :key="stock.name"></market-stock-card>
         </v-row>
     </v-container>
 </template>
 
 <script>
+    import MarketStockCard from "../components/MarketStockCard";
+
     export default {
         name: "Stocks",
+        components: {MarketStockCard},
+        data() {
+            return {
+                rules: {
+                    maxAmount: value => value < this.funds / this.stock.price || "You can't afford this"
+                },
+                store: -1
+            }
+        },
         computed: {
             stocks() {
-                return this.$store.state.stockStorage
+                return this.$store.state.stockStorage;
+            },
+            funds() {
+                return this.$store.state.funds;
             }
-        }
+        },
     }
 </script>
 
