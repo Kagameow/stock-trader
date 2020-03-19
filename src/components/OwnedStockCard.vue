@@ -1,14 +1,16 @@
 <template>
     <v-col cols="12" md="6">
-        <v-card color="teal darken-3" dark>
+        <v-card v-if="stock.ownedQuantity" color="light-blue darken-4" dark>
             <v-row>
                 <v-col cols="5">
                     <v-card-title>{{stock.name}}</v-card-title>
-                    <v-card-text>Price: {{stock.price}}</v-card-text>
+                    <v-card-text>Price: {{stock.price}}
+                        <br>Quantity: {{stock.ownedQuantity}}
+                    </v-card-text>
                 </v-col>
                 <v-col cols="7">
                     <div>
-                        <v-card-actions style="margin-top: 15px">
+                        <v-card-actions style="margin-top: 25px">
                             <v-form v-model="isFormValid">
                                 <v-text-field
                                         v-model="enteredQuantity"
@@ -21,10 +23,10 @@
                                 </v-text-field>
                             </v-form>
                             <v-btn :disabled="enteredQuantity && !isFormValid"
-                                   @click="buyStocks"
+                                   @click="sellStocks"
                                    large
                                    height="55px"
-                            >Buy!
+                            >Sell
                             </v-btn>
                         </v-card-actions>
                     </div>
@@ -36,7 +38,7 @@
 
 <script>
     export default {
-        name: "MarketStockCard",
+        name: "OwnedStockCard",
         props: {
             stock: {
                 type: Object,
@@ -45,9 +47,9 @@
         data() {
             return {
                 rules: {
-                    maxAmount: value => +value <= this.funds / this.stock.price
+                    maxAmount: value => +value <= this.stock.ownedQuantity
                         || !value
-                        || "You can't afford this"
+                        || "Not enough stocks!"
                 },
                 isFormValid: false,
                 enteredQuantity: '',
@@ -59,7 +61,7 @@
                     return this.$store.state.funds;
                 },
                 set(newVal) {
-                    console.log(newVal, 'новая мамкаы')
+                    console.log(newVal, 'bucks!')
                     this.$store.state.funds = newVal;
                 }
             },
@@ -74,10 +76,10 @@
             }
         },
         methods: {
-            buyStocks() {
-                console.log(this.funds, this.ownedQuantity);
-                this.funds = this.funds - this.stock.price * +this.enteredQuantity;
-                this.ownedQuantity = this.stock.ownedQuantity + +this.enteredQuantity;
+            sellStocks() {
+                console.log(this.funds, this.stock.ownedQuantity);
+                this.funds = this.funds + this.stock.price * +this.enteredQuantity;
+                this.ownedQuantity = this.stock.ownedQuantity - +this.enteredQuantity;
                 console.log(this.funds, this.ownedQuantity);
             }
         },
@@ -86,7 +88,7 @@
         },
         watch: {
             enteredQuantity(newValue) {
-                console.log(+newValue);
+                console.log(newValue);
             }
         },
     }
