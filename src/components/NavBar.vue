@@ -28,7 +28,7 @@
                     </v-list-item>
                 </v-list>
             </v-menu>
-            <v-btn class="mr-2" text>
+            <v-btn class="mr-2" text @click="newDay">
                 End Day
             </v-btn>
             <span class="font-weight-black">
@@ -43,7 +43,12 @@
         computed: {
             funds() {
                 return this.$store.state.funds;
+            },
+        },
+        methods: {
+            newDay() {
+                this.$store.commit('newDayCalculation');
             }
-        }
+        },
     }
 </script>

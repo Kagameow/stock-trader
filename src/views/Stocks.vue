@@ -17,7 +17,6 @@
                 rules: {
                     maxAmount: value => value < this.funds / this.stock.price || "You can't afford this"
                 },
-                store: -1
             }
         },
         computed: {

@@ -9,22 +9,33 @@ export default new Vuex.Store({
         stockStorage: {
             rubles: {
                 name: 'Мини-деньги',
-                ownedQuantity: 100,
-                price: 10,
+                ownedQuantity: 0,
+                price: 78,
             },
             brent: {
                 name: 'BRENT',
-                ownedQuantity: 2,
-                price: 10,
+                ownedQuantity: 0,
+                price: 40,
             },
             cocks: {
                 name: 'Cocks',
                 ownedQuantity: 0,
-                price: 10,
+                price: 1000,
             },
         }
     },
-    mutations: {},
+    mutations: {
+        newDayCalculation: state => {
+            const priceChange = (stockPrice) => {
+                const maxRandPrice = stockPrice + stockPrice / 10;
+                const minRandPrice = stockPrice - stockPrice / 10;
+                return Math.floor(Math.random() * ((maxRandPrice) - (minRandPrice) + 1) + minRandPrice)
+            };
+            for (let stockKey in state.stockStorage) {
+                state.stockStorage[stockKey].price = priceChange(state.stockStorage[stockKey].price);
+            }
+        }
+    },
     actions: {},
     modules: {}
 })

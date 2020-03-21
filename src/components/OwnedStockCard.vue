@@ -61,34 +61,14 @@
                     return this.$store.state.funds;
                 },
                 set(newVal) {
-                    console.log(newVal, 'bucks!')
                     this.$store.state.funds = newVal;
                 }
             },
-            ownedQuantity: {
-                get() {
-                    return this.stock.ownedQuantity;
-                },
-                set(newVal) {
-                    console.log(newVal, 'gayyy');
-                    this.stock.ownedQuantity = newVal;
-                }
-            }
         },
         methods: {
             sellStocks() {
-                console.log(this.funds, this.stock.ownedQuantity);
                 this.funds = this.funds + this.stock.price * +this.enteredQuantity;
-                this.ownedQuantity = this.stock.ownedQuantity - +this.enteredQuantity;
-                console.log(this.funds, this.ownedQuantity);
-            }
-        },
-        created() {
-            console.log(this.store)
-        },
-        watch: {
-            enteredQuantity(newValue) {
-                console.log(newValue);
+                this.stock.ownedQuantity = this.stock.ownedQuantity - +this.enteredQuantity;
             }
         },
     }
