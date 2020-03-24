@@ -20,7 +20,7 @@
                                 >
                                 </v-text-field>
                             </v-form>
-                            <v-btn :disabled="enteredQuantity ==='' || enteredQuantity <= 0 || !isFormValid"
+                            <v-btn :disabled="enteredQuantity ===''|| !Number.isInteger(+enteredQuantity) || enteredQuantity <= 0 || !isFormValid"
                                    @click="buyStocks"
                                    large
                                    height="55px"
