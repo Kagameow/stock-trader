@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import axios from 'axios';
 
 Vue.use(Vuex);
 
@@ -7,17 +8,18 @@ export default new Vuex.Store({
     state: {
         funds: 10000,
         stockStorage: {
-            rubles: {
+            /*This style (1rubles, 2brent, etc) of keys naming is important to save them in correct order in Firebase*/
+            '1rubles': {
                 name: 'Мини-деньги',
                 ownedQuantity: 0,
                 price: 78,
             },
-            brent: {
+            '2brent': {
                 name: 'BRENT',
                 ownedQuantity: 0,
                 price: 40,
             },
-            cocks: {
+            '3cocks': {
                 name: 'Cocks',
                 ownedQuantity: 0,
                 price: 1000,
@@ -34,8 +36,35 @@ export default new Vuex.Store({
             for (let stockKey in state.stockStorage) {
                 state.stockStorage[stockKey].price = priceChange(state.stockStorage[stockKey].price);
             }
+        },
+        save(){
+            alert('Data was saved!');
+        },
+        load: (state, payload) => {
+            state.funds = payload.funds;
+            state.stockStorage = payload.stockStorage;
+            alert('Data was loaded!');
         }
     },
-    actions: {},
+    actions: {
+        newDayCalculation: ({commit}) => {
+            commit('newDayCalculation');
+        },
+        save: ({commit, state}) => {
+            axios.put('https://itwouldthrowerrorcauseactualdbstillinseccure/save.json', state)
+                .then(() => {
+                    commit('save')
+                })
+                .catch(error => console.log(error))
+        },
+        load: ({commit}) => {
+            axios.get('https://itwouldthrowerrorcauseactualdbstillinseccure/save.json')
+                .then(loadedState => {
+                    commit('load', loadedState.data)
+                })
+                .catch(error => console.log(error));
+        }
+
+    },
     modules: {}
 })

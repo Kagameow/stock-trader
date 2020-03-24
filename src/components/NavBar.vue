@@ -20,15 +20,15 @@
                     </v-btn>
                 </template>
                 <v-list>
-                    <v-list-item @click="true">
+                    <v-list-item @click="save">
                         <v-list-item-title>Save</v-list-item-title>
                     </v-list-item>
-                    <v-list-item @click="true">
+                    <v-list-item @click="load">
                         <v-list-item-title>Load</v-list-item-title>
                     </v-list-item>
                 </v-list>
             </v-menu>
-            <v-btn class="mr-2" text @click="newDay">
+            <v-btn class="mr-2" text @click="newDayCalculation">
                 End Day
             </v-btn>
             <span class="font-weight-black">
@@ -38,6 +38,8 @@
 </template>
 
 <script>
+    import {mapActions} from 'vuex';
+
     export default {
         name: 'NavBar',
         computed: {
@@ -46,9 +48,14 @@
             },
         },
         methods: {
-            newDay() {
-                this.$store.commit('newDayCalculation');
-            }
+            ...mapActions([
+                'newDayCalculation',
+                'save',
+                'load'
+            ])
+            // newDay() {
+            //     this.$store.commit('newDayCalculation');
+            // }
         },
     }
 </script>

@@ -1,6 +1,6 @@
 <template>
-    <v-col cols="12" md="6">
-        <v-card v-if="stock.ownedQuantity" color="light-blue darken-4" dark>
+    <v-col cols="12" md="6" v-if="stock.ownedQuantity" >
+        <v-card color="light-blue darken-4" dark>
             <v-row>
                 <v-col cols="5">
                     <v-card-title>{{stock.name}}</v-card-title>
