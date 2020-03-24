@@ -53,9 +53,6 @@
                 'save',
                 'load'
             ])
-            // newDay() {
-            //     this.$store.commit('newDayCalculation');
-            // }
         },
     }
 </script>
