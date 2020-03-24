@@ -19,11 +19,11 @@
                                             type="number"
                                             outlined
                                             style="margin-block-end: -31px"
-                                            :rules="[rules.maxAmount]"
+                                            :rules="[rules.maxAmount, rules.validNumber]"
                                     >
                                     </v-text-field>
                                 </v-form>
-                                <v-btn :disabled="enteredQuantity ==='' ||!Number.isInteger(+enteredQuantity) || enteredQuantity <= 0 || !isFormValid"
+                                <v-btn :disabled="enteredQuantity ==='' || enteredQuantity <= 0 || !isFormValid"
                                        @click="sellStocks"
                                        large
                                        height="55px"
@@ -49,9 +49,8 @@
         data() {
             return {
                 rules: {
-                    maxAmount: value => +value <= this.stock.ownedQuantity
-                        || !value
-                        || "Not enough stocks!"
+                    maxAmount: value => +value <= this.stock.ownedQuantity || "Not enough stocks!",
+                    validNumber: value => Number.isInteger(+value) || 'Enter valid number',
                 },
                 isFormValid: false,
                 enteredQuantity: '',
