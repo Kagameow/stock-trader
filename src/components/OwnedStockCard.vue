@@ -1,4 +1,5 @@
 <template>
+    <transition name="fade-in-bottom" mode="out-in">
     <v-col cols="12" md="6" v-if="stock.ownedQuantity" >
         <v-card color="light-blue darken-4" dark>
             <v-row>
@@ -34,6 +35,7 @@
             </v-row>
         </v-card>
     </v-col>
+    </transition>
 </template>
 
 <script>
