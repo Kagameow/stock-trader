@@ -51,14 +51,14 @@ export default new Vuex.Store({
             commit('newDayCalculation');
         },
         save: ({commit, state}) => {
-            axios.put('https://itwouldthrowerrorcauseactualdbstillinseccure/save.json', state)
+            axios.put('/save.json', state)
                 .then(() => {
                     commit('save')
                 })
                 .catch(error => console.log(error))
         },
         load: ({commit}) => {
-            axios.get('https://itwouldthrowerrorcauseactualdbstillinseccure/save.json')
+            axios.get('/save.json')
                 .then(loadedState => {
                     commit('load', loadedState.data)
                 })
