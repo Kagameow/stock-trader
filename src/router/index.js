@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Portfolio from "../views/Portfolio";
 import Stocks from "../views/Stocks";
+import Authentication from "../views/Authentication";
 
 Vue.use(VueRouter);
 
@@ -21,6 +22,11 @@ const routes = [
     path: '/stocks',
     name: 'Stocks',
     component: Stocks
+  },
+  {
+    path: '/login',
+    name: 'Authentication',
+    component: Authentication
   },
 ];
 
