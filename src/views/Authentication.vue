@@ -24,8 +24,9 @@
                         </v-text-field>
                         <v-text-field label="Password"
                                       prepend-icon="mdi-lock"
-                                      type="password"
                                       :rules="rules.password"
+                                      :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                                      @click:append="showPassword = !showPassword"
                                       required>
                         </v-text-field>
                         <v-card-actions class="justify-center">
@@ -48,8 +49,10 @@
                         </v-text-field>
                         <v-text-field label="Password"
                                       prepend-icon="mdi-lock"
-                                      type="password"
+                                      :type="showPassword ? 'text' : 'password'"
                                       :rules="rules.password"
+                                      :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                                      @click:append="showPassword = !showPassword"
                                       required>
                         </v-text-field>
                         <v-card-actions class="justify-center">
@@ -83,7 +86,8 @@
                         v => (v && v.length >= 8) || 'Password must be at least 8 characters long',
                     ]
                 },
-                isFormValid: true
+                isFormValid: true,
+                showPassword: false
             }
         },
     }
