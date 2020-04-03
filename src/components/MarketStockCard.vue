@@ -55,10 +55,10 @@
         computed: {
             funds: {
                 get() {
-                    return this.$store.state.funds;
+                    return this.$store.state.gameData.funds;
                 },
                 set(newVal) {
-                    this.$store.state.funds = newVal;
+                    this.$store.state.gameData.funds = newVal;
                 }
             },
         },

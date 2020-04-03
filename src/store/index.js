@@ -9,25 +9,28 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        funds: 10000,
-        stockStorage: {
-            /*This style (1rubles, 2brent, etc) of keys naming is important to save them in correct order in Firebase*/
-            '1rubles': {
-                name: 'Мини-деньги',
-                ownedQuantity: 0,
-                price: 78,
-            },
-            '2brent': {
-                name: 'BRENT',
-                ownedQuantity: 0,
-                price: 40,
-            },
-            '3cocks': {
-                name: 'Cocks',
-                ownedQuantity: 0,
-                price: 1000,
-            },
+        gameData: {
+            funds: 10000,
+            stockStorage: {
+                /*This style (1rubles, 2brent, etc) of keys naming is important to save them in correct order in Firebase*/
+                '1rubles': {
+                    name: 'Мини-деньги',
+                    ownedQuantity: 0,
+                    price: 78,
+                },
+                '2brent': {
+                    name: 'BRENT',
+                    ownedQuantity: 0,
+                    price: 40,
+                },
+                '3cocks': {
+                    name: 'Cocks',
+                    ownedQuantity: 0,
+                    price: 1000,
+                },
+            }
         }
+
     },
     mutations: {
         newDayCalculation: state => {
@@ -36,16 +39,16 @@ export default new Vuex.Store({
                 const minRandPrice = stockPrice - stockPrice / 10;
                 return Math.floor(Math.random() * ((maxRandPrice) - (minRandPrice) + 1) + minRandPrice)
             };
-            for (let stockKey in state.stockStorage) {
-                state.stockStorage[stockKey].price = priceChange(state.stockStorage[stockKey].price);
+            for (let stockKey in state.gameData.stockStorage) {
+                state.gameData.stockStorage[stockKey].price = priceChange(state.gameData.stockStorage[stockKey].price);
             }
         },
-        save(){
+        save() {
             alert('Data was saved!');
         },
         load: (state, payload) => {
-            state.funds = payload.funds;
-            state.stockStorage = payload.stockStorage;
+            state.gameData.funds = payload.funds;
+            state.gameData.stockStorage = payload.stockStorage;
             alert('Data was loaded!');
         }
     },
@@ -54,7 +57,7 @@ export default new Vuex.Store({
             commit('newDayCalculation');
         },
         save: ({commit, state}) => {
-            axios.put('/save.json', state)
+            axios.put('/save.json', state.gameData)
                 .then(() => {
                     commit('save')
                 })

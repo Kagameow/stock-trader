@@ -16,7 +16,7 @@
         components: {},
         computed: {
             funds() {
-                return this.$store.state.funds;
+                return this.$store.state.gameData.funds;
             },
 
         }

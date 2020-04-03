@@ -21,10 +21,10 @@
         },
         computed: {
             stocks() {
-                return this.$store.state.stockStorage;
+                return this.$store.state.gameData.stockStorage;
             },
             funds() {
-                return this.$store.state.funds;
+                return this.$store.state.gameData.funds;
             }
         },
     }
