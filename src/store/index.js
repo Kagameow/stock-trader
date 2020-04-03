@@ -2,6 +2,9 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios';
 
+//const SIGN_UP_URL =  process.env.VUE_APP_SIGN_UP_URL;
+//const SIGN_IN_URL =  process.env.VUE_APP_SIGN_IN_URL;
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
