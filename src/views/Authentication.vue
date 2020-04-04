@@ -20,6 +20,7 @@
                                       prepend-icon="mdi-email"
                                       :rules="rules.email"
                                       required
+                                      v-model="userAuthForm.email"
                         >
                         </v-text-field>
                         <v-text-field label="Password"
@@ -28,7 +29,9 @@
                                       :rules="rules.password"
                                       :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                                       @click:append="showPassword = !showPassword"
-                                      required>
+                                      required
+                                      v-model="userAuthForm.password"
+                        >
                         </v-text-field>
                         <v-card-actions class="justify-center">
                             <v-btn class="mb-2"
@@ -46,6 +49,7 @@
                                       prepend-icon="mdi-email"
                                       :rules="rules.email"
                                       required
+                                      v-model="userAuthForm.email"
                         >
                         </v-text-field>
                         <v-text-field label="Password"
@@ -54,13 +58,15 @@
                                       :rules="rules.password"
                                       :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                                       @click:append="showPassword = !showPassword"
-                                      required>
+                                      required
+                                      v-model="userAuthForm.password"
+                        >
                         </v-text-field>
                         <v-card-actions class="justify-center">
                             <v-btn class="mb-2"
                                    large
                                    :disabled="!isFormValid"
-                                   @click="true"
+                                   @click="signUp"
                             >
                                 Sign Up
                             </v-btn>
@@ -73,6 +79,8 @@
 </template>
 
 <script>
+    import {mapActions} from "vuex";
+
     export default {
         name: "Authentication",
         data() {
@@ -88,8 +96,27 @@
                     ]
                 },
                 isFormValid: true,
-                showPassword: false
+                showPassword: false,
+                formContent: {
+                    email: '',
+                    password: ''
+                }
             }
+        },
+        computed: {
+            userAuthForm: {
+                get(){
+                    return this.$store.state.userAuthForm;
+                },
+                set(newVal){
+                    this.$store.state.commit('setUserAuthForm', newVal)
+                }
+            }
+        },
+        methods: {
+            ...mapActions([
+                "signUp"
+            ])
         },
     }
 </script>

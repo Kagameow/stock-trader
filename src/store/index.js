@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios';
 
-//const SIGN_UP_URL =  process.env.VUE_APP_SIGN_UP_URL;
+const SIGN_UP_URL =  process.env.VUE_APP_SIGN_UP_URL;
 //const SIGN_IN_URL =  process.env.VUE_APP_SIGN_IN_URL;
 
 Vue.use(Vuex);
@@ -29,10 +29,17 @@ export default new Vuex.Store({
                     price: 1000,
                 },
             }
+        },
+        userAuthForm: {
+            email: '',
+            password: ''
         }
 
     },
     mutations: {
+        setUserAuthForm:(state, payload) => {
+            state.userAuthForm = payload;
+        },
         newDayCalculation: state => {
             const priceChange = (stockPrice) => {
                 const maxRandPrice = stockPrice + stockPrice / 10;
@@ -50,6 +57,9 @@ export default new Vuex.Store({
             state.gameData.funds = payload.funds;
             state.gameData.stockStorage = payload.stockStorage;
             alert('Data was loaded!');
+        },
+        signUp: (state, payload) => {
+            console.log(state.userAuthForm, payload)
         }
     },
     actions: {
@@ -69,8 +79,17 @@ export default new Vuex.Store({
                     commit('load', loadedState.data)
                 })
                 .catch(error => console.log(error));
+        },
+        signUp: ({commit, state}) => {
+            axios.post(SIGN_UP_URL,{
+                email: state.userAuthForm.email,
+                password: state.userAuthForm.password,
+                returnSecureToken: true
+            })
+                .then(res => console.log(res))
+                .catch(error => console.log(error));
+            commit('signUp', state.userAuthForm);
         }
-
     },
     modules: {}
 })
