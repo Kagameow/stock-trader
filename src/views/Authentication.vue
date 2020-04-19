@@ -36,7 +36,7 @@
                         <v-card-actions class="justify-center">
                             <v-btn class="mb-2"
                                    large
-                                   @click="true"
+                                   @click="signIn"
                                    :disabled="!isFormValid"
                             >Login
                             </v-btn>
@@ -115,7 +115,8 @@
         },
         methods: {
             ...mapActions([
-                "signUp"
+                "signUp",
+                "signIn"
             ])
         },
     }

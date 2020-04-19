@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import axios from 'axios';
 
 const SIGN_UP_URL =  process.env.VUE_APP_SIGN_UP_URL;
-//const SIGN_IN_URL =  process.env.VUE_APP_SIGN_IN_URL;
+const SIGN_IN_URL =  process.env.VUE_APP_SIGN_IN_URL;
 
 Vue.use(Vuex);
 
@@ -60,7 +60,10 @@ export default new Vuex.Store({
         },
         signUp: (state, payload) => {
             console.log(state.userAuthForm, payload)
-        }
+        },
+        signIn: (state, payload) => {
+            console.log(state.userAuthForm, payload)
+        },
     },
     actions: {
         newDayCalculation: ({commit}) => {
@@ -89,6 +92,21 @@ export default new Vuex.Store({
                 .then(res => console.log(res))
                 .catch(error => console.log(error));
             commit('signUp', state.userAuthForm);
+        },
+        signIn: ({commit, state}) => {
+            axios.post(SIGN_IN_URL,{
+                email: state.userAuthForm.email,
+                password: state.userAuthForm.password,
+                returnSecureToken: true
+            })
+                .then(res => {
+                    console.log(res)
+                    commit('signIn', {
+                        token: res.data.idToken,
+                        userId: res.data.localId
+                    })
+                })
+                .catch(error => console.log(error));
         }
     },
     modules: {}
