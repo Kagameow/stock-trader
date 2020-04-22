@@ -33,6 +33,11 @@ export default new Vuex.Store({
         userAuthForm: {
             email: '',
             password: ''
+        },
+        loggedUserData: {
+            idToken: null,
+            userId: null,
+            userEmail: null
         }
 
     },
@@ -62,13 +67,17 @@ export default new Vuex.Store({
             console.log(state.userAuthForm, payload)
         },
         signIn: (state, payload) => {
-            console.log(state.userAuthForm, payload)
+            state.loggedUserData.idToken = payload.token;
+            state.loggedUserData.userId = payload.userId;
+            state.loggedUserData.userEmail = payload.email;
+            console.log(state.loggedUserData, 'dick')
         },
     },
     actions: {
         newDayCalculation: ({commit}) => {
             commit('newDayCalculation');
         },
+        //TODO rewrite save/load logic for user individual saves
         save: ({commit, state}) => {
             axios.put('/save.json', state.gameData)
                 .then(() => {
@@ -93,6 +102,8 @@ export default new Vuex.Store({
                 .catch(error => console.log(error));
             commit('signUp', state.userAuthForm);
         },
+        //TODO renavigate to home page after login, block login page access to authed user
+        //TODO keep user data in local storage, logout button
         signIn: ({commit, state}) => {
             axios.post(SIGN_IN_URL,{
                 email: state.userAuthForm.email,
@@ -100,14 +111,19 @@ export default new Vuex.Store({
                 returnSecureToken: true
             })
                 .then(res => {
-                    console.log(res)
+                    console.log(res, 'cock')
                     commit('signIn', {
                         token: res.data.idToken,
-                        userId: res.data.localId
+                        userId: res.data.localId,
+                        email: res.data.email
                     })
                 })
                 .catch(error => console.log(error));
         }
     },
-    modules: {}
+    getters: {
+        isAuthenticated (state) {
+            return state.loggedUserData.idToken !== null
+        }
+    }
 })
