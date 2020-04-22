@@ -14,7 +14,9 @@
         <v-spacer></v-spacer>
         <v-menu offset-y>
             <template v-slot:activator="{ on }">
-                <v-btn v-on="on" text>
+                <v-btn v-on="on"
+                       :disabled="!isAuthenticated"
+                       text>
                     Save & Load
                     <v-icon>mdi-menu-down</v-icon>
                 </v-btn>
@@ -31,7 +33,15 @@
         <v-btn class="mr-2" text @click="newDayCalculation">
             End Day
         </v-btn>
-        <v-btn class="mr-2" text to="/login">
+        <v-btn class="mr-2"
+               v-if="isAuthenticated"
+               text>
+            Logout
+        </v-btn>
+        <v-btn class="mr-2"
+               v-else
+               text
+               to="/login">
             Login
         </v-btn>
         <span class="font-weight-black">
@@ -48,6 +58,9 @@
         computed: {
             funds() {
                 return this.$store.state.gameData.funds;
+            },
+            isAuthenticated() {
+                return this.$store.getters.isAuthenticated;
             },
         },
         methods: {

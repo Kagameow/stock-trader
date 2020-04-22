@@ -2,7 +2,8 @@
     <v-container class="col-xs-12 col-md-8 col-lg-6 align-center justify-center pa-6">
         <v-card>
             <v-img src="../assets/stonks.jpg"/>
-            <v-card-title>Trade or View your Portfolio</v-card-title>
+            <v-card-title v-if="isAuthenticated">Welcome, {{email}}!</v-card-title>
+            <v-card-title v-else>Trade or View your Portfolio</v-card-title>
             <v-card-text>You may Save & Load your Data<br>Click on "End Day" to begin a new Day!</v-card-text>
             <v-divider class="mx-4"></v-divider>
             <v-card-title>Your Funds: {{funds}}$</v-card-title>
@@ -18,7 +19,12 @@
             funds() {
                 return this.$store.state.gameData.funds;
             },
-
+            isAuthenticated() {
+                return this.$store.getters.isAuthenticated;
+            },
+            email() {
+                return this.$store.state.loggedUserData.userEmail;
+            }
         }
     }
 </script>
