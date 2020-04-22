@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios';
+import router from "../router";
 
 const SIGN_UP_URL =  process.env.VUE_APP_SIGN_UP_URL;
 const SIGN_IN_URL =  process.env.VUE_APP_SIGN_IN_URL;
@@ -117,6 +118,7 @@ export default new Vuex.Store({
                         userId: res.data.localId,
                         email: res.data.email
                     })
+                    router.replace('/')
                 })
                 .catch(error => console.log(error));
         }

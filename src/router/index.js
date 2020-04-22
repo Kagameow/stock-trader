@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import Portfolio from "../views/Portfolio";
 import Stocks from "../views/Stocks";
 import Authentication from "../views/Authentication";
+import store from  "../store"
 
 Vue.use(VueRouter);
 
@@ -26,7 +27,14 @@ const routes = [
   {
     path: '/login',
     name: 'Authentication',
-    component: Authentication
+    component: Authentication,
+    beforeEnter(to, from, next) {
+      if (!store.state.loggedUserData.idToken){
+        next()
+      } else {
+        next('/')
+      }
+    }
   },
 ];
 
