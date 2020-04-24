@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios';
 import router from "../router";
+import defaultGameData from "./defaultGameData";
 
 const SIGN_UP_URL =  process.env.VUE_APP_SIGN_UP_URL;
 const SIGN_IN_URL =  process.env.VUE_APP_SIGN_IN_URL;
@@ -10,27 +11,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        gameData: {
-            funds: 10000,
-            stockStorage: {
-                /*This style (1rubles, 2brent, etc) of keys naming is important to save them in correct order in Firebase*/
-                '1rubles': {
-                    name: 'Мини-деньги',
-                    ownedQuantity: 0,
-                    price: 78,
-                },
-                '2brent': {
-                    name: 'BRENT',
-                    ownedQuantity: 0,
-                    price: 40,
-                },
-                '3cocks': {
-                    name: 'Cocks',
-                    ownedQuantity: 0,
-                    price: 1000,
-                },
-            }
-        },
+        gameData: {...defaultGameData.state.defaultGameData},
         userAuthForm: {
             email: '',
             password: ''
@@ -103,7 +84,6 @@ export default new Vuex.Store({
                 .catch(error => console.log(error));
             commit('signUp', state.userAuthForm);
         },
-        //TODO renavigate to home page after login, block login page access to authed user
         //TODO keep user data in local storage, logout button
         signIn: ({commit, state}) => {
             axios.post(SIGN_IN_URL,{
@@ -120,12 +100,15 @@ export default new Vuex.Store({
                     })
                     router.replace('/')
                 })
-                .catch(error => console.log(error));
+                .catch(error => alert(error.response.data.error.message));
         }
     },
     getters: {
         isAuthenticated (state) {
             return state.loggedUserData.idToken !== null
         }
+    },
+    modules: {
+        defaultGameData
     }
 })
