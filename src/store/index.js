@@ -4,8 +4,9 @@ import axios from 'axios';
 import router from "../router";
 import defaultGameData from "./defaultGameData";
 
-const SIGN_UP_URL =  process.env.VUE_APP_SIGN_UP_URL;
-const SIGN_IN_URL =  process.env.VUE_APP_SIGN_IN_URL;
+const SIGN_UP_URL = process.env.VUE_APP_SIGN_UP_URL;
+const SIGN_IN_URL = process.env.VUE_APP_SIGN_IN_URL;
+const DB_URL = process.env.VUE_APP_DB_URL;
 
 Vue.use(Vuex);
 
@@ -24,7 +25,7 @@ export default new Vuex.Store({
 
     },
     mutations: {
-        setUserAuthForm:(state, payload) => {
+        setUserAuthForm: (state, payload) => {
             state.userAuthForm = payload;
         },
         newDayCalculation: state => {
@@ -41,52 +42,69 @@ export default new Vuex.Store({
             alert('Data was saved!');
         },
         load: (state, payload) => {
+            console.log(payload)
             state.gameData.funds = payload.funds;
             state.gameData.stockStorage = payload.stockStorage;
             alert('Data was loaded!');
-        },
-        signUp: (state, payload) => {
-            console.log(state.userAuthForm, payload)
         },
         signIn: (state, payload) => {
             state.loggedUserData.idToken = payload.token;
             state.loggedUserData.userId = payload.userId;
             state.loggedUserData.userEmail = payload.email;
-            console.log(state.loggedUserData, 'dick')
+            router.replace('/')
         },
     },
     actions: {
         newDayCalculation: ({commit}) => {
             commit('newDayCalculation');
         },
-        //TODO rewrite save/load logic for user individual saves
         save: ({commit, state}) => {
-            axios.put('/save.json', state.gameData)
+            axios.patch(`${DB_URL}/users/${state.loggedUserData.userId}.json?auth=${state.loggedUserData.idToken}`,
+                {
+                    gameData: state.gameData
+                })
                 .then(() => {
                     commit('save')
                 })
                 .catch(error => console.log(error))
         },
-        load: ({commit}) => {
-            axios.get('/save.json')
+        load: ({commit, state}) => {
+            axios.get(`${DB_URL}/users/${state.loggedUserData.userId}/gameData.json?auth=${state.loggedUserData.idToken}`)
                 .then(loadedState => {
                     commit('load', loadedState.data)
                 })
                 .catch(error => console.log(error));
         },
         signUp: ({commit, state}) => {
-            axios.post(SIGN_UP_URL,{
+            axios.post(SIGN_UP_URL, {
                 email: state.userAuthForm.email,
                 password: state.userAuthForm.password,
                 returnSecureToken: true
             })
-                .then(res => console.log(res))
+                .then(res => {
+                    console.log(res);
+                    commit('signIn', {
+                        token: res.data.idToken,
+                        userId: res.data.localId,
+                        email: res.data.email
+                    })
+                    const userDataForDB = {
+                        [res.data.localId]: {
+                            email: res.data.email,
+                            gameData: state.defaultGameData.defaultGameData
+                        }
+                    }
+                    console.log(userDataForDB)
+                    axios.patch(`${DB_URL}/users.json?auth=${state.loggedUserData.idToken}`,
+                        userDataForDB)
+                        .then(res => console.log(res))
+                        .catch(error => console.warn(error))
+                })
                 .catch(error => console.log(error));
-            commit('signUp', state.userAuthForm);
         },
         //TODO keep user data in local storage, logout button
-        signIn: ({commit, state}) => {
-            axios.post(SIGN_IN_URL,{
+        signIn: ({commit, dispatch, state}) => {
+            axios.post(SIGN_IN_URL, {
                 email: state.userAuthForm.email,
                 password: state.userAuthForm.password,
                 returnSecureToken: true
@@ -98,13 +116,13 @@ export default new Vuex.Store({
                         userId: res.data.localId,
                         email: res.data.email
                     })
-                    router.replace('/')
+                    dispatch('load');
                 })
                 .catch(error => alert(error.response.data.error.message));
         }
     },
     getters: {
-        isAuthenticated (state) {
+        isAuthenticated(state) {
             return state.loggedUserData.idToken !== null
         }
     },
