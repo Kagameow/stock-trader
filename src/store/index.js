@@ -59,15 +59,27 @@ export default new Vuex.Store({
             state.loggedUserData.userId = payload.userId;
             state.loggedUserData.userEmail = payload.email;
             state.loggedUserData.refreshToken = payload.refreshToken;
+        },
+        saveUserToLocalStorage: (state, payload) => {
             localStorage.setItem('idToken', payload.token);
             localStorage.setItem('userId', payload.userId);
             localStorage.setItem('userEmail', payload.email);
             localStorage.setItem('refreshToken', payload.refreshToken);
-            router.replace('/')
         },
         setNewToken: (state, newToken) => {
             state.loggedUserData.idToken = newToken;
             localStorage.setItem('idToken', newToken);
+        },
+        logout: (state) => {
+            state.loggedUserData.idToken = null
+            state.loggedUserData.userId = null
+            state.loggedUserData.userEmail = null
+            state.loggedUserData.refreshToken = null
+            localStorage.removeItem('idToken');
+            localStorage.removeItem('userId');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('nextTokenRefresh');
         }
     },
     actions: {
@@ -121,13 +133,15 @@ export default new Vuex.Store({
             })
                 .then(res => {
                     console.log(res);
-                    commit('signIn', {
+                    const userData = {
                         token: res.data.idToken,
                         userId: res.data.localId,
                         email: res.data.email,
                         refreshToken: res.data.refreshToken
-                    })
-                    commit('setNewTokenRefreshDate', res.data.expiresIn)
+                    }
+                    commit('signIn', userData);
+                    commit('saveUserToLocalStorage', userData);
+                    commit('setNewTokenRefreshDate', res.data.expiresIn);
                     const userDataForDB = {
                         [res.data.localId]: {
                             email: res.data.email,
@@ -139,11 +153,11 @@ export default new Vuex.Store({
                         userDataForDB)
                         .then(res => console.log(res))
                         .catch(error => console.warn(error))
-                    dispatch('getNewTokenInterval')
+                    dispatch('getNewTokenInterval');
+                    router.replace('/')
                 })
                 .catch(error => console.log(error));
         },
-        //TODO keep user data in local storage, logout button
         signIn: ({commit, dispatch, state}) => {
             axios.post(SIGN_IN_URL, {
                 email: state.userAuthForm.email,
@@ -152,17 +166,41 @@ export default new Vuex.Store({
             })
                 .then(res => {
                     console.log(res, 'res')
-                    commit('signIn', {
+                    const userData = {
                         token: res.data.idToken,
                         userId: res.data.localId,
                         email: res.data.email,
                         refreshToken: res.data.refreshToken
-                    })
+                    }
+                    commit('signIn', userData)
+                    commit('saveUserToLocalStorage', userData)
                     commit('setNewTokenRefreshDate', res.data.expiresIn)
                     dispatch('load');
                     dispatch('getNewTokenInterval');
+                    router.replace('/')
                 })
                 .catch(error => alert(error.response.data.error.message));
+        },
+        tryAutoLogin: ({commit, dispatch}) => {
+            const idToken = localStorage.getItem('idToken')
+            if (idToken) {
+                const tokenRefreshDate = new Date(localStorage.getItem('nextTokenRefresh'));
+                const currentTime = new Date();
+                if (tokenRefreshDate > currentTime) {
+                    commit('signIn', {
+                        token: idToken,
+                        userId: localStorage.getItem('userId'),
+                        email: localStorage.getItem('userEmail'),
+                        refreshToken: localStorage.getItem('refreshToken')
+                    });
+                    dispatch('getNewTokenInterval');
+                    dispatch('load');
+                }
+            }
+        },
+        logout: ({commit}) => {
+            commit('logout');
+            router.replace('/login')
         }
     },
     getters: {

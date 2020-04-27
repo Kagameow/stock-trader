@@ -35,6 +35,7 @@
         </v-btn>
         <v-btn class="mr-2"
                v-if="isAuthenticated"
+               @click="logout"
                text>
             Logout
         </v-btn>
@@ -67,7 +68,8 @@
             ...mapActions([
                 'newDayCalculation',
                 'save',
-                'load'
+                'load',
+                'logout'
             ])
         },
     }
