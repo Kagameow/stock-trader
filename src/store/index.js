@@ -7,6 +7,7 @@ import defaultGameData from "./defaultGameData";
 const SIGN_UP_URL = process.env.VUE_APP_SIGN_UP_URL;
 const SIGN_IN_URL = process.env.VUE_APP_SIGN_IN_URL;
 const DB_URL = process.env.VUE_APP_DB_URL;
+const REFRESH_TOKEN_URL = process.env.VUE_APP_REFRESH_TOKEN_URL;
 
 Vue.use(Vuex);
 
@@ -20,7 +21,8 @@ export default new Vuex.Store({
         loggedUserData: {
             idToken: null,
             userId: null,
-            userEmail: null
+            userEmail: null,
+            refreshToken: null
         }
 
     },
@@ -47,12 +49,26 @@ export default new Vuex.Store({
             state.gameData.stockStorage = payload.stockStorage;
             alert('Data was loaded!');
         },
+        setNewTokenRefreshDate: (state, tokenLifespan) => {
+            const currentTime = new Date();
+            const nextTokenRefresh = new Date(currentTime.getTime() + tokenLifespan * 1000 - 10000);
+            localStorage.setItem('nextTokenRefresh', nextTokenRefresh);
+        },
         signIn: (state, payload) => {
             state.loggedUserData.idToken = payload.token;
             state.loggedUserData.userId = payload.userId;
             state.loggedUserData.userEmail = payload.email;
+            state.loggedUserData.refreshToken = payload.refreshToken;
+            localStorage.setItem('idToken', payload.token);
+            localStorage.setItem('userId', payload.userId);
+            localStorage.setItem('userEmail', payload.email);
+            localStorage.setItem('refreshToken', payload.refreshToken);
             router.replace('/')
         },
+        setNewToken: (state, newToken) => {
+            state.loggedUserData.idToken = newToken;
+            localStorage.setItem('idToken', newToken);
+        }
     },
     actions: {
         newDayCalculation: ({commit}) => {
@@ -75,7 +91,29 @@ export default new Vuex.Store({
                 })
                 .catch(error => console.log(error));
         },
-        signUp: ({commit, state}) => {
+        getNewToken: ({commit, state}) => {
+            axios.post(REFRESH_TOKEN_URL, {
+                grant_type: 'refresh_token',
+                refresh_token: state.loggedUserData.refreshToken
+            }).then(res => {
+                console.log(res.data.id_token, 'new cocken')
+                commit('setNewToken', res.data.id_token);
+                commit('setNewTokenRefreshDate', res.data.expires_in)
+                console.log(state.loggedUserData.idToken, 'store cock');
+            }).catch(error => console.log(error));
+        },
+        getNewTokenInterval: ({dispatch}) => {
+            const currentTime = new Date();
+            const tokenRefreshDate = new Date(localStorage.getItem('nextTokenRefresh'));
+            const tokenRefreshInterval = tokenRefreshDate.getTime() - currentTime.getTime();
+            console.log(tokenRefreshInterval)
+            setTimeout(() => {
+                    dispatch('getNewToken');
+                    dispatch('getNewTokenInterval')
+                }, tokenRefreshInterval
+            )
+        },
+        signUp: ({commit, dispatch, state}) => {
             axios.post(SIGN_UP_URL, {
                 email: state.userAuthForm.email,
                 password: state.userAuthForm.password,
@@ -86,8 +124,10 @@ export default new Vuex.Store({
                     commit('signIn', {
                         token: res.data.idToken,
                         userId: res.data.localId,
-                        email: res.data.email
+                        email: res.data.email,
+                        refreshToken: res.data.refreshToken
                     })
+                    commit('setNewTokenRefreshDate', res.data.expiresIn)
                     const userDataForDB = {
                         [res.data.localId]: {
                             email: res.data.email,
@@ -99,6 +139,7 @@ export default new Vuex.Store({
                         userDataForDB)
                         .then(res => console.log(res))
                         .catch(error => console.warn(error))
+                    dispatch('getNewTokenInterval')
                 })
                 .catch(error => console.log(error));
         },
@@ -110,13 +151,16 @@ export default new Vuex.Store({
                 returnSecureToken: true
             })
                 .then(res => {
-                    console.log(res, 'cock')
+                    console.log(res, 'res')
                     commit('signIn', {
                         token: res.data.idToken,
                         userId: res.data.localId,
-                        email: res.data.email
+                        email: res.data.email,
+                        refreshToken: res.data.refreshToken
                     })
+                    commit('setNewTokenRefreshDate', res.data.expiresIn)
                     dispatch('load');
+                    dispatch('getNewTokenInterval');
                 })
                 .catch(error => alert(error.response.data.error.message));
         }
