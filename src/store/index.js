@@ -30,6 +30,9 @@ export default new Vuex.Store({
         setUserAuthForm: (state, payload) => {
             state.userAuthForm = payload;
         },
+        newGame: state => {
+            state.gameData = {...state.defaultGameData.defaultGameData}
+        },
         newDayCalculation: state => {
             const priceChange = (stockPrice) => {
                 const maxRandPrice = stockPrice + stockPrice / 10;
@@ -83,6 +86,9 @@ export default new Vuex.Store({
         }
     },
     actions: {
+        newGame: ({commit}) => {
+            commit('newGame')
+        },
         newDayCalculation: ({commit}) => {
             commit('newDayCalculation');
         },
@@ -121,7 +127,7 @@ export default new Vuex.Store({
             console.log(tokenRefreshInterval)
             setTimeout(() => {
                     dispatch('getNewToken');
-                    dispatch('getNewTokenInterval')
+                    dispatch('getNewTokenInterval');
                 }, tokenRefreshInterval
             )
         },
@@ -154,7 +160,7 @@ export default new Vuex.Store({
                         .then(res => console.log(res))
                         .catch(error => console.warn(error))
                     dispatch('getNewTokenInterval');
-                    router.replace('/')
+                    router.replace('/');
                 })
                 .catch(error => console.log(error));
         },
@@ -172,9 +178,9 @@ export default new Vuex.Store({
                         email: res.data.email,
                         refreshToken: res.data.refreshToken
                     }
-                    commit('signIn', userData)
-                    commit('saveUserToLocalStorage', userData)
-                    commit('setNewTokenRefreshDate', res.data.expiresIn)
+                    commit('signIn', userData);
+                    commit('saveUserToLocalStorage', userData);
+                    commit('setNewTokenRefreshDate', res.data.expiresIn);
                     dispatch('load');
                     dispatch('getNewTokenInterval');
                     router.replace('/')
@@ -198,9 +204,10 @@ export default new Vuex.Store({
                 }
             }
         },
-        logout: ({commit}) => {
+        logout: ({commit, dispatch}) => {
             commit('logout');
-            router.replace('/login')
+            dispatch('newGame');
+            router.replace('/login');
         }
     },
     getters: {

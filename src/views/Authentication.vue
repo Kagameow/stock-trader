@@ -109,7 +109,7 @@
                     return this.$store.state.userAuthForm;
                 },
                 set(newVal){
-                    this.$store.state.commit('setUserAuthForm', newVal)
+                    this.$store.state.commit('setUserAuthForm', newVal);
                 }
             }
         },

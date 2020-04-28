@@ -17,7 +17,7 @@
         name: 'App',
         components: {NavBar},
         created() {
-            this.$store.dispatch('tryAutoLogin')
+            this.$store.dispatch('tryAutoLogin');
         }
     };
 
