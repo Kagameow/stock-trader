@@ -12,7 +12,7 @@
                     <v-col cols="7">
                         <div>
                             <v-card-actions style="margin-top: 25px">
-                                <v-form v-model="isFormValid">
+                                <v-form ref="form" v-model="isFormValid">
                                     <v-text-field
                                             v-model="enteredQuantity"
                                             label="Quantity"
@@ -70,6 +70,7 @@
             sellStocks() {
                 this.funds = this.funds + this.stock.price * +this.enteredQuantity;
                 this.stock.ownedQuantity = this.stock.ownedQuantity - +this.enteredQuantity;
+                this.$refs.form.validate();
             }
         },
     }
