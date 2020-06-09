@@ -13,7 +13,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        gameData: {...defaultGameData.state.defaultGameData},
+        gameData: JSON.parse(JSON.stringify(defaultGameData.state.defaultGameData)),
         userAuthForm: {
             email: '',
             password: ''
@@ -31,7 +31,7 @@ export default new Vuex.Store({
             state.userAuthForm = payload;
         },
         newGame: state => {
-            state.gameData = {...state.defaultGameData.defaultGameData}
+            state.gameData = JSON.parse(JSON.stringify(state.defaultGameData.defaultGameData));
         },
         newDayCalculation: state => {
             const priceChange = (stockPrice) => {
