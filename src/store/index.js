@@ -47,7 +47,6 @@ export default new Vuex.Store({
             alert('Data was saved!');
         },
         load: (state, payload) => {
-            console.log(payload)
             state.gameData.funds = payload.funds;
             state.gameData.stockStorage = payload.stockStorage;
             alert('Data was loaded!');
@@ -114,17 +113,14 @@ export default new Vuex.Store({
                 grant_type: 'refresh_token',
                 refresh_token: state.loggedUserData.refreshToken
             }).then(res => {
-                console.log(res.data.id_token, 'new cocken')
                 commit('setNewToken', res.data.id_token);
                 commit('setNewTokenRefreshDate', res.data.expires_in)
-                console.log(state.loggedUserData.idToken, 'store cock');
             }).catch(error => console.log(error));
         },
         getNewTokenInterval: ({dispatch}) => {
             const currentTime = new Date();
             const tokenRefreshDate = new Date(localStorage.getItem('nextTokenRefresh'));
             const tokenRefreshInterval = tokenRefreshDate.getTime() - currentTime.getTime();
-            console.log(tokenRefreshInterval)
             setTimeout(() => {
                     dispatch('getNewToken');
                     dispatch('getNewTokenInterval');
@@ -138,7 +134,6 @@ export default new Vuex.Store({
                 returnSecureToken: true
             })
                 .then(res => {
-                    console.log(res);
                     const userData = {
                         token: res.data.idToken,
                         userId: res.data.localId,
@@ -154,10 +149,9 @@ export default new Vuex.Store({
                             gameData: state.defaultGameData.defaultGameData
                         }
                     }
-                    console.log(userDataForDB)
                     axios.patch(`${DB_URL}/users.json?auth=${state.loggedUserData.idToken}`,
                         userDataForDB)
-                        .then(res => console.log(res))
+                        .then(() => {})
                         .catch(error => console.warn(error))
                     dispatch('getNewTokenInterval');
                     router.replace('/');
@@ -171,7 +165,6 @@ export default new Vuex.Store({
                 returnSecureToken: true
             })
                 .then(res => {
-                    console.log(res, 'res')
                     const userData = {
                         token: res.data.idToken,
                         userId: res.data.localId,
