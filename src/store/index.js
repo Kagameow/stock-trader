@@ -129,7 +129,7 @@ export default new Vuex.Store({
         },
         signUp: ({commit, dispatch, state}) => {
             axios.post(SIGN_UP_URL, {
-                email: state.userAuthForm.email,
+                email: state.userAuthForm.email.trim(),
                 password: state.userAuthForm.password,
                 returnSecureToken: true
             })
@@ -160,7 +160,7 @@ export default new Vuex.Store({
         },
         signIn: ({commit, dispatch, state}) => {
             axios.post(SIGN_IN_URL, {
-                email: state.userAuthForm.email,
+                email: state.userAuthForm.email.trim(),
                 password: state.userAuthForm.password,
                 returnSecureToken: true
             })
